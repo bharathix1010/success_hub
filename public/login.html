@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Student Productivity Dashboard</title>
+    <link rel="stylesheet" href="index.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f6fb;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .login-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .login-container h2 {
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #666;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        .login-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 1rem;
+            transition: background 0.3s;
+        }
+        .login-btn:hover {
+            background-color: #357abd;
+        }
+        .toggle-form {
+            margin-top: 1rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .toggle-form a {
+            color: #4a90e2;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .error-message {
+            color: #e74c3c;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2 id="form-title">Login</h2>
+        <div id="error-msg" class="error-message"></div>
+        <form id="auth-form">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit" class="login-btn" id="submit-btn">Login</button>
+        </form>
+        <div class="toggle-form">
+            <span id="toggle-text">Don't have an account?</span>
+            <a id="toggle-link">Sign Up</a>
+        </div>
+    </div>
+    <script src="login.js"></script>
+</body>
+</html>

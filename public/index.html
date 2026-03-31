@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Student Productivity Dashboard</title>
+<link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+
+<div class="dashboard">
+    
+<!-- Sidebar -->
+<aside class="sidebar">
+
+<div class="logo">
+<h2>SuccessHub 🎓</h2>
+</div>
+
+<ul class="menu">
+<li class="active" data-section="dashboard-section">Overview</li>
+<li data-section="enrollment-section">Enrollment</li>
+<li data-section="tasks-section">Focus List</li>
+<li data-section="assignments-section">Projects</li>
+<li data-section="reminders-section">Alerts</li>
+<li data-section="notes-section">Brainstorm</li>
+<li data-section="timetable-section">Schedule</li>
+<li data-section="motivation-section">Growth</li>
+<li data-section="study-section">Deep Work</li>
+<li data-section="calendar-section">Planner</li>
+<li data-section="performance-section">Analytics</li>
+<li data-section="settings-section">Configure</li>
+</ul>
+
+<div class="logout-container">
+<button onclick="logoutUser()" class="logout-btn">
+Logout
+</button>
+</div>
+</aside>
+
+<!-- Main Wrapper -->
+<div class="main-wrapper">
+
+    <!-- Top Header -->
+    <header class="top-header">
+        <div class="search-bar">
+            <input type="text" placeholder="Search your goals, notes, or projects...">
+        </div>
+        <div class="user-profile" id="user-profile-btn" style="cursor: pointer; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
+            <div class="user-info">
+                <h4 id="display-name">Student Name</h4>
+                <p id="user-role">Student Account</p>
+            </div>
+            <div class="user-avatar" style="background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px;">S</div>
+        </div>
+    </header>
+
+    <!-- Profile Details Modal -->
+    <div id="profile-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
+        <div class="side-card" style="width: 450px; padding: 40px; position: relative; animation: fadeIn 0.3s ease-out;">
+            <button onclick="closeProfileModal()" style="position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-muted);">&times;</button>
+            <div style="text-align: center; margin-bottom: 30px;">
+                <div id="modal-avatar" style="width: 80px; height: 80px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 800; margin: 0 auto 15px;">S</div>
+                <h2 id="modal-username" style="margin-bottom: 5px;">Username</h2>
+                <p id="modal-role" style="color: var(--primary); font-weight: 700; font-size: 14px;">Student Account</p>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 20px; border-top: 1px solid #f1f5f9; padding-top: 25px;">
+                <div>
+                    <label style="font-size: 12px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Display Name</label>
+                    <p id="modal-display-name" style="font-weight: 600; font-size: 16px; margin-top: 5px;">-</p>
+                </div>
+                <div>
+                    <label style="font-size: 12px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Email Address</label>
+                    <p id="modal-email" style="font-weight: 600; font-size: 16px; margin-top: 5px;">-</p>
+                </div>
+                <div>
+                    <label style="font-size: 12px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Phone Number</label>
+                    <p id="modal-phone" style="font-weight: 600; font-size: 16px; margin-top: 5px;">-</p>
+                </div>
+                <div>
+                    <label style="font-size: 12px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Address</label>
+                    <p id="modal-address" style="font-weight: 600; font-size: 16px; margin-top: 5px;">-</p>
+                </div>
+                <div>
+                    <label style="font-size: 12px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Enrolled Courses</label>
+                    <ul id="modal-enrollments" style="list-style: none; margin-top: 10px; font-size: 14px; font-weight: 600; display: flex; flex-wrap: wrap; gap: 8px;">
+                        <!-- Courses here -->
+                    </ul>
+                </div>
+            </div>
+            
+            <button class="btn-primary" style="width: 100%; margin-top: 40px;" onclick="closeProfileModal()">Close Profile</button>
+        </div>
+    </div>
+
+    <!-- Content Layout -->
+    <div class="content-layout">
+        
+        <!-- Main Scrollable Area -->
+        <main class="main-scroll">
+
+            <!-- DASHBOARD / OVERVIEW -->
+            <section id="dashboard-section" class="content-section active">
+                <div class="welcome-banner">
+                    <h2>Good Morning! 👋</h2>
+                    <p>You have pending tasks and upcoming projects. It's a great day to achieve your goals. Let's get started!</p>
+                    <p id="today-date" style="margin-top: 15px; font-weight: 700;"></p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Active Goals</h3>
+                        <p id="dash-total-tasks">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Finished</h3>
+                        <p id="dash-completed-tasks">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>On Deck</h3>
+                        <p id="dash-pending-tasks">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Projects</h3>
+                        <p id="dash-total-assignments">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Enrolled</h3>
+                        <p id="dash-total-enrollments">0</p>
+                    </div>
+                </div>
+
+                <div class="list-container" style="margin-bottom: 30px;">
+                    <div class="list-header">
+                        <h3>My Enrolled Courses</h3>
+                    </div>
+                    <div id="enrolled-courses-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px;">
+                        <p>No courses enrolled yet.</p>
+                    </div>
+                </div>
+
+                <div class="list-container" style="margin-bottom: 30px;">
+                    <div class="list-header">
+                        <h3>Current Progress</h3>
+                        <button class="btn-primary" onclick="updateDashboard()">Refresh Insights</button>
+                    </div>
+                    <div class="chart-bar" style="height: 12px; background: #f1f5f9; border-radius: 6px; overflow: hidden;">
+                        <div id="task-progress-bar" style="height: 100%; background: var(--primary); width: 0%; transition: width 0.5s ease;"></div>
+                    </div>
+                </div>
+
+                <div class="list-container">
+                    <div class="list-header">
+                        <h3>Latest Updates</h3>
+                    </div>
+                    <ul id="activity-list" style="list-style: none;">
+                        <li>No activity yet</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Enrollment Section -->
+            <section id="enrollment-section" class="content-section">
+                <h1 class="page-title">Course Enrollment</h1>
+                <div class="welcome-banner" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                    <h2>Available Courses</h2>
+                    <p>Enhance your skills by enrolling in our expert-led courses.</p>
+                </div>
+                <div id="available-courses-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+                    <!-- Courses will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Focus List -->
+            <section id="tasks-section" class="content-section">
+                <h1 class="page-title">Focus List</h1>
+                <div class="stats-grid">
+                    <div class="stat-card"><h3>Total Goals</h3><p id="total-tasks">0</p></div>
+                    <div class="stat-card"><h3>Achieved</h3><p id="completed-tasks">0</p></div>
+                    <div class="stat-card"><h3>Remaining</h3><p id="pending-tasks">0</p></div>
+                </div>
+                <div class="list-container">
+                    <div class="task-input" style="display: flex; gap: 15px; margin-bottom: 25px;">
+                        <input type="text" id="task-title" placeholder="What's your next goal?" style="flex: 1; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                        <input type="date" id="task-date" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                        <select id="task-priority" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                        </select>
+                        <button class="btn-primary" onclick="addTask()">Add Goal</button>
+                    </div>
+                    <div id="task-list" class="task-list"></div>
+                </div>
+            </section>
+
+            <!-- Projects -->
+            <section id="assignments-section" class="content-section">
+                <h1 class="page-title">Project Tracker</h1>
+                <div class="stats-grid">
+                    <div class="stat-card"><h3>All Projects</h3><p id="total-assignments">0</p></div>
+                    <div class="stat-card"><h3>Turned In</h3><p id="submitted-assignments">0</p></div>
+                    <div class="stat-card"><h3>In Progress</h3><p id="pending-assignments">0</p></div>
+                </div>
+                <div class="list-container">
+                    <div class="assignment-input" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px;">
+                        <input type="text" id="assignment-title" placeholder="Project name" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                        <input type="text" id="assignment-subject" placeholder="Subject/Course" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                        <input type="date" id="assignment-date" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                        <select id="assignment-priority" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                            <option value="Low">Low Priority</option>
+                            <option value="Medium">Medium Priority</option>
+                            <option value="High">High Priority</option>
+                        </select>
+                        <button class="btn-primary" onclick="addAssignment()" style="grid-column: span 2;">Create Project</button>
+                    </div>
+                    <div id="assignment-list" class="assignment-list"></div>
+                </div>
+            </section>
+
+            <!-- Alerts -->
+            <section id="reminders-section" class="content-section">
+                <h1 class="page-title">Time Alerts</h1>
+                <div class="list-container">
+                    <div class="reminder-input" style="display: flex; gap: 15px; margin-bottom: 30px;">
+                        <input type="text" id="reminderText" placeholder="Don't forget to..." style="flex: 1; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                        <input type="datetime-local" id="reminderTime" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                        <button class="btn-primary" id="addReminderBtn">Set Alert</button>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="side-card"><h3>Active</h3><ul id="pendingReminders"></ul></div>
+                        <div class="side-card"><h3>Soon</h3><ul id="dueReminders"></ul></div>
+                        <div class="side-card"><h3>History</h3><ul id="completedReminders"></ul></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Brainstorm -->
+            <section id="notes-section" class="content-section">
+                <h1 class="page-title">Brainstorming</h1>
+                <div class="list-container">
+                    <input type="text" id="search-note" placeholder="Find an idea..." onkeyup="searchNotes()" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 20px;">
+                    <div class="note-input" style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px;">
+                        <div style="display: flex; gap: 15px;">
+                            <input type="text" id="note-title" placeholder="Topic name" style="flex: 1; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                            <select id="note-category" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                                <option value="Study">Knowledge</option>
+                                <option value="Personal">Personal</option>
+                                <option value="Ideas">Inspiration</option>
+                                <option value="Important">Urgent</option>
+                            </select>
+                        </div>
+                        <textarea id="note-content" placeholder="Let your ideas flow..." style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; height: 100px; resize: none;"></textarea>
+                        <button class="btn-primary" onclick="addNote()">Capture Idea</button>
+                    </div>
+                    <div id="notes-container" class="notes-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;"></div>
+                </div>
+            </section>
+
+            <!-- Schedule -->
+            <section id="timetable-section" class="content-section">
+                <h1 class="page-title">Weekly Schedule</h1>
+                <div class="list-container">
+                    <div class="timetable-form" style="display: flex; gap: 15px; margin-bottom: 25px;">
+                        <input type="text" id="subject-name" placeholder="Class/Subject" style="flex: 1; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                        <select id="day-select" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                            <option value="">Day</option><option value="Mon">Monday</option><option value="Tue">Tuesday</option><option value="Wed">Wednesday</option><option value="Thu">Thursday</option><option value="Fri">Friday</option>
+                        </select>
+                        <select id="time-select" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                            <option value="">Slot</option><option value="8-9">08:00</option><option value="9-10">09:00</option><option value="10-11">10:00</option><option value="11-12">11:00</option><option value="1-2">13:00</option><option value="2-3">14:00</option>
+                        </select>
+                        <button class="btn-primary" onclick="addClass()">Add to Schedule</button>
+                    </div>
+                    <table class="timetable" style="width: 100%; border-collapse: collapse;">
+                        <thead><tr style="background: #f8fafc;"><th style="padding: 15px; border: 1px solid #e2e8f0;">Time</th><th style="padding: 15px; border: 1px solid #e2e8f0;">Mon</th><th style="padding: 15px; border: 1px solid #e2e8f0;">Tue</th><th style="padding: 15px; border: 1px solid #e2e8f0;">Wed</th><th style="padding: 15px; border: 1px solid #e2e8f0;">Thu</th><th style="padding: 15px; border: 1px solid #e2e8f0;">Fri</th></tr></thead>
+                        <tbody>
+                            <tr><td style="padding: 15px; border: 1px solid #e2e8f0; font-weight: 700;">08:00</td><td id="Mon-8-9" style="padding: 15px; border: 1px solid #e2e8f0;"></td><td id="Tue-8-9" style="padding: 15px; border: 1px solid #e2e8f0;"></td><td id="Wed-8-9" style="padding: 15px; border: 1px solid #e2e8f0;"></td><td id="Thu-8-9" style="padding: 15px; border: 1px solid #e2e8f0;"></td><td id="Fri-8-9" style="padding: 15px; border: 1px solid #e2e8f0;"></td></tr>
+                            <tr><td style="padding: 15px; border: 1px solid #e2e8f0; font-weight: 700;">09:00</td><td id="Mon-9-10" style="padding: 15px; border: 1px solid #e2e8f0;"></td><td id="Tue-9-10" style="padding: 15px; border: 1px solid #e2e8f0;"></td><td id="Wed-9-10" style="padding: 15px; border: 1px solid #e2e8f0;"></td><td id="Thu-9-10" style="padding: 15px; border: 1px solid #e2e8f0;"></td><td id="Fri-9-10" style="padding: 15px; border: 1px solid #e2e8f0;"></td></tr>
+                            <tr><td style="padding: 15px; border: 1px solid #e2e8f0; font-weight: 700;">10:00</td><td id="Mon-10-11" style="padding: 15px; border: 1px solid #e2e8f0;"></td><td id="Tue-10-11" style="padding: 15px; border: 1px solid #e2e8f0;"></td><td id="Wed-10-11" style="padding: 15px; border: 1px solid #e2e8f0;"></td><td id="Thu-10-11" style="padding: 15px; border: 1px solid #e2e8f0;"></td><td id="Fri-10-11" style="padding: 15px; border: 1px solid #e2e8f0;"></td></tr>
+                            <tr><td style="padding: 15px; border: 1px solid #e2e8f0; font-weight: 700;">11:00</td><td id="Mon-11-12" style="padding: 15px; border: 1px solid #e2e8f0;"></td><td id="Tue-11-12" style="padding: 15px; border: 1px solid #e2e8f0;"></td><td id="Wed-11-12" style="padding: 15px; border: 1px solid #e2e8f0;"></td><td id="Thu-11-12" style="padding: 15px; border: 1px solid #e2e8f0;"></td><td id="Fri-11-12" style="padding: 15px; border: 1px solid #e2e8f0;"></td></tr>
+                            <tr><td style="padding: 15px; border: 1px solid #e2e8f0; font-weight: 700;">13:00</td><td id="Mon-1-2" style="padding: 15px; border: 1px solid #e2e8f0;"></td><td id="Tue-1-2" style="padding: 15px; border: 1px solid #e2e8f0;"></td><td id="Wed-1-2" style="padding: 15px; border: 1px solid #e2e8f0;"></td><td id="Thu-1-2" style="padding: 15px; border: 1px solid #e2e8f0;"></td><td id="Fri-1-2" style="padding: 15px; border: 1px solid #e2e8f0;"></td></tr>
+                            <tr><td style="padding: 15px; border: 1px solid #e2e8f0; font-weight: 700;">14:00</td><td id="Mon-2-3" style="padding: 15px; border: 1px solid #e2e8f0;"></td><td id="Tue-2-3" style="padding: 15px; border: 1px solid #e2e8f0;"></td><td id="Wed-2-3" style="padding: 15px; border: 1px solid #e2e8f0;"></td><td id="Thu-2-3" style="padding: 15px; border: 1px solid #e2e8f0;"></td><td id="Fri-2-3" style="padding: 15px; border: 1px solid #e2e8f0;"></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Growth -->
+            <section id="motivation-section" class="content-section">
+                <h1 class="page-title">Growth & Mindset</h1>
+                <div class="stats-grid">
+                    <div class="side-card"><h3>Daily Wisdom</h3><p id="quote-text" style="font-style: italic; margin-bottom: 10px;">Success is the sum of small efforts...</p><h4 id="quote-author" style="color: var(--text-muted);">— Robert Collier</h4><button class="btn-primary" onclick="newQuote()" style="margin-top: 15px;">Next Quote</button></div>
+                    <div class="side-card"><h3>Success Tip</h3><p id="tip-text">Break large tasks into smaller steps...</p><button class="btn-primary" onclick="newTip()" style="margin-top: 15px;">Get New Tip</button></div>
+                    <div class="side-card"><h3>Streak Tracker</h3><p id="productive-days" style="font-size: 24px; font-weight: 800;">0 Days</p><button class="btn-primary" onclick="addDay()" style="margin-top: 15px;">I Was Productive!</button></div>
+                </div>
+            </section>
+
+            <!-- Deep Work -->
+            <section id="study-section" class="content-section">
+                <h1 class="page-title">Deep Work Timer</h1>
+                <div class="list-container" style="text-align: center; padding: 50px;">
+                    <div class="timer-circle" style="margin: 0 auto;">
+                        <svg width="240" height="240"><circle cx="120" cy="120" r="100" class="bg" style="fill:none; stroke:#e2e8f0; stroke-width:12;"></circle><circle cx="120" cy="120" r="100" class="progress" id="progress" style="fill:none; stroke:var(--primary); stroke-width:12; stroke-linecap:round; stroke-dasharray:628; stroke-dashoffset:0; transition:stroke-dashoffset 1s linear;"></circle></svg>
+                        <div class="time" id="time" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:40px; font-weight:800;">25:00</div>
+                    </div>
+                    <div class="controls" style="margin-top: 30px; display: flex; justify-content: center; gap: 15px;">
+                        <button class="btn-primary" onclick="startTimer()">Start Session</button>
+                        <button class="btn-primary" onclick="pauseTimer()" style="background: #64748b;">Pause</button>
+                        <button class="btn-primary" onclick="resetTimer()" style="background: #94a3b8;">Reset</button>
+                        <button class="btn-primary" onclick="toggleFocusMode()" id="focus-btn" style="background: #f59e0b;">Focus Mode</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analytics -->
+            <section id="performance-section" class="content-section">
+                <h1 class="page-title">Growth Analytics</h1>
+                <div class="stats-grid">
+                    <div class="stat-card" style="grid-column: span 2;"><h3>Time Investment</h3><canvas id="studyChart"></canvas></div>
+                    <div class="stat-card" style="grid-column: span 2;"><h3>Consistency Score</h3><canvas id="productivityChart"></canvas></div>
+                </div>
+            </section>
+
+            <!-- Configure -->
+            <section id="settings-section" class="content-section">
+                <h1 class="page-title">Settings & Configuration</h1>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px; align-items: start;">
+                    
+                    <!-- Profile Identity Card -->
+                    <div class="side-card" style="padding: 30px;">
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 25px; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px;">
+                            <div style="width: 45px; height: 45px; border-radius: 12px; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 20px;">👤</div>
+                            <h3 style="margin: 0;">Profile Identity</h3>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div style="grid-column: span 2;">
+                                <label style="display: block; font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px;">Display Name</label>
+                                <input type="text" id="userName" placeholder="Your full name" style="width:100%; padding:12px; border-radius:10px; border:1.5px solid #e2e8f0; outline: none; transition: border-color 0.3s;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='#e2e8f0'">
+                            </div>
+                            
+                            <div style="grid-column: span 2;">
+                                <label style="display: block; font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px;">Email Address</label>
+                                <input type="email" id="userEmail" placeholder="yourname@example.com" style="width:100%; padding:12px; border-radius:10px; border:1.5px solid #e2e8f0; outline: none; transition: border-color 0.3s;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='#e2e8f0'">
+                            </div>
+
+                            <div style="grid-column: span 1;">
+                                <label style="display: block; font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px;">Phone Number</label>
+                                <input type="text" id="userPhone" placeholder="+1 (555) 000-0000" style="width:100%; padding:12px; border-radius:10px; border:1.5px solid #e2e8f0; outline: none; transition: border-color 0.3s;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='#e2e8f0'">
+                            </div>
+
+                            <div style="grid-column: span 1;">
+                                <label style="display: block; font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px;">Growth Goal (Hrs)</label>
+                                <input type="number" id="studyGoal" placeholder="e.g. 5" style="width:100%; padding:12px; border-radius:10px; border:1.5px solid #e2e8f0; outline: none; transition: border-color 0.3s;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='#e2e8f0'">
+                            </div>
+
+                            <div style="grid-column: span 2;">
+                                <label style="display: block; font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px;">Home Address</label>
+                                <textarea id="userAddress" placeholder="123 Student St, City, Country" style="width:100%; padding:12px; border-radius:10px; border:1.5px solid #e2e8f0; outline: none; transition: border-color 0.3s; height: 80px; resize: none;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='#e2e8f0'"></textarea>
+                            </div>
+                        </div>
+                        
+                        <button class="btn-primary" onclick="saveProfile()" style="width: 100%; margin-top: 30px; padding: 14px; font-size: 15px; letter-spacing: 0.5px;">Save Profile Changes</button>
+                    </div>
+
+                    <!-- App Preferences Card -->
+                    <div style="display: flex; flex-direction: column; gap: 30px;">
+                        
+                        <div class="side-card" style="padding: 30px;">
+                            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                                <div style="width: 40px; height: 40px; border-radius: 10px; background: #fef3c7; color: #d97706; display: flex; align-items: center; justify-content: center; font-size: 18px;">🎨</div>
+                                <h3 style="margin: 0;">Interface Theme</h3>
+                            </div>
+                            <div style="display: flex; gap: 15px;">
+                                <button class="btn-primary" onclick="setTheme('light')" style="flex: 1; background: #f8fafc; color: var(--text-main); border: 1.5px solid #e2e8f0;">☀️ Light Mode</button>
+                                <button class="btn-primary" onclick="setTheme('dark')" style="flex: 1; background: #1e293b;">🌙 Dark Mode</button>
+                            </div>
+                        </div>
+
+                        <div class="side-card" style="padding: 30px;">
+                            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                                <div style="width: 40px; height: 40px; border-radius: 10px; background: #fee2e2; color: #dc2626; display: flex; align-items: center; justify-content: center; font-size: 18px;">💾</div>
+                                <h3 style="margin: 0;">Data Management</h3>
+                            </div>
+                            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Export your data for backup or clear your workspace.</p>
+                            <div style="display: flex; flex-direction: column; gap: 12px;">
+                                <button class="btn-primary" onclick="exportUserData()" style="background: #64748b;">📥 Export Data (JSON)</button>
+                                <button class="btn-primary" onclick="resetDashboard()" style="background: #ef4444;">🗑️ Wipe All Data</button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Right Sidebar (Calendar & Events) -->
+        <aside class="right-sidebar">
+            <div class="side-card" id="calendar-mini">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <h3>Life Planner</h3>
+                    <div style="display:flex; gap:10px;">
+                        <button id="prevMonth" style="background:none; border:none; cursor:pointer;">◀</button>
+                        <button id="nextMonth" style="background:none; border:none; cursor:pointer;">▶</button>
+                    </div>
+                </div>
+                <h4 id="monthYear" style="text-align:center; margin-bottom:15px; font-size:14px; color:var(--primary);"></h4>
+                <div class="calendar-dates" id="calendarDates" style="display:grid; grid-template-columns:repeat(7, 1fr); gap:5px; font-size:12px; text-align:center;"></div>
+            </div>
+
+            <div class="side-card">
+                <h3>Upcoming Agenda</h3>
+                <ul id="events" style="list-style:none; font-size:13px; color:var(--text-muted);">
+                    <li>No upcoming events</li>
+                </ul>
+                <div style="margin-top:20px; border-top:1px solid #f1f5f9; padding-top:15px;">
+                    <input type="text" id="eventTitle" placeholder="New event..." style="width:100%; padding:10px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:10px;">
+                    <input type="date" id="eventDate" style="width:100%; padding:10px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:10px;">
+                    <button class="btn-primary" onclick="addEvent()" style="width:100%;">Save Event</button>
+                </div>
+            </div>
+        </aside>
+
+    </div>
+</div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="index.js"></script>
+
+</body>
+</html>
